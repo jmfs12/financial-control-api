@@ -30,4 +30,4 @@ build/
 
 ### VS Code ###
 .vscode/
-/api/.env
+/infra/*.env

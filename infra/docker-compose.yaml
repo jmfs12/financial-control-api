@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:15
+    container_name: financial-db
+    restart: always
+    env_file:
+      - db.env
+    networks:
+      - private_network
+    ports:
+      - "5432:5432"
+
+  api:
+    build:
+      context: ../api
+      dockerfile: ../infra/Dockerfile
+    container_name: financial-api
+    env_file:
+      - api.env
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../api/src:/app/src
+      - ../api/pom.xml:/app/pom.xml
+    depends_on:
+      - db
+    networks:
+      - private_network
+      - public_network
+
+networks:
+  private_network:
+    driver: bridge
+  public_network:
+    driver: bridge
+
+
