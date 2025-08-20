@@ -4,7 +4,7 @@ services:
     container_name: financial-db
     restart: always
     env_file:
-      - db.env
+      - ./infra/db.env
     networks:
       - private_network
     ports:
@@ -12,16 +12,16 @@ services:
 
   api:
     build:
-      context: ../api
+      context: ./api
       dockerfile: ../infra/Dockerfile
     container_name: financial-api
     env_file:
-      - api.env
+      - ./infra/api.env
     ports:
       - "8080:8080"
     volumes:
-      - ../api/src:/app/src
-      - ../api/pom.xml:/app/pom.xml
+      - /api/src:/app/src
+      - /api/pom.xml:/app/pom.xml
     depends_on:
       - db
     networks:

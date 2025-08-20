@@ -4,9 +4,6 @@ spring:
       on-profile: test
 
   datasource:
-    url: ${jdbc:tc:postgresql:15-alpine:///financial_test}  # Testcontainers Postgres
-    username: ${POSTGRES_USER:test_user}
-    password: ${POSTGRES_PASSWORD:test_password}
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     hikari:
       maximum-pool-size: 5
