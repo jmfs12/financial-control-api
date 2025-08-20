@@ -25,9 +25,6 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
 
-  cache:
-    type: caffeine
-
   jackson:
     serialization:
       write-dates-as-timestamps: false
@@ -49,12 +46,7 @@ management:
 springdoc:
   api-docs:
     enabled: true
+    path: /v3/api-docs
   swagger-ui:
     enabled: true
-
-
-logging:
-  level:
-    root: DEBUG
-    org.springframework: DEBUG
-    com.jmfs: DEBUG
+    path: /swagger-ui.html
