@@ -50,3 +50,11 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
+  
+
+api.security.token.secret: "secret"
+web.url: ""
+
+logging:
+  level:
+    com.jmfs: DEBUG

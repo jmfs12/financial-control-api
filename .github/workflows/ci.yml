@@ -38,9 +38,7 @@ jobs:
 
     - name: Run unit & integration tests
       working-directory: ./api
-      env:
-        SPRING_PROFILES_ACTIVE: test
-      run: mvn test
+      run: mvn test -Dspring.profiles.active=test
 
     - name: Build Docker image
-      run: docker build -t financial-api:latest -f ./infra/Dockerfile ./api
+      run: docker build -t financial-api:latest ./api

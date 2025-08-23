@@ -5,6 +5,9 @@ spring:
 
   datasource:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:postgresql:15-alpine:///testdb
+    username: test
+    password: test
     hikari:
       maximum-pool-size: 5
       minimum-idle: 1
@@ -48,3 +51,11 @@ management:
 springdoc:
   swagger-ui:
     enabled: false
+
+
+logging:
+  level:
+    com.jmfs: DEBUG
+    
+api.security.token.secret: "secret"
+web.url: ""

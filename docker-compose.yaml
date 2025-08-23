@@ -4,19 +4,18 @@ services:
     container_name: financial-db
     restart: always
     env_file:
-      - ./infra/db.env
+      - db.env
     networks:
       - private_network
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
   api:
     build:
       context: ./api
-      dockerfile: ../infra/Dockerfile
     container_name: financial-api
     env_file:
-      - ./infra/api.env
+      - api.env
     ports:
       - "8080:8080"
     volumes:
