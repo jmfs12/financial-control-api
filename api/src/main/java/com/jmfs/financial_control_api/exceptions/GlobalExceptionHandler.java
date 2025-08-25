@@ -13,7 +13,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ProblemDetail exception(UserNotFoundException e){
-         log.warn("User not found: {}", e.getMessage()); // log at WARN, no stacktrace needed
+        log.warn("User not found: {}", e.getMessage()); // log at WARN, no stacktrace needed
 
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         problemDetail.setTitle("User Not Found");
