@@ -38,8 +38,8 @@ public class SecurityFilter extends OncePerRequestFilter{
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             log.debug("[SECURITY FILTER] Valid token founded for user {}", user.getUsername());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-        filterChain.doFilter(request, response);
+        }else
+            filterChain.doFilter(request, response);
     }
 
     private String recoverToken(HttpServletRequest request){

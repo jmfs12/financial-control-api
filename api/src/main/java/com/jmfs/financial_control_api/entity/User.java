@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Table(name="users")
@@ -37,5 +37,5 @@ public class User {
     private RoleEnum role;
 
     @Column(name="created_at")
-    private LocalDateTime createdAt;
+    private Instant createdAt = Instant.now();
 }

@@ -13,12 +13,34 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ProblemDetail exception(UserNotFoundException e){
-        log.warn("User not found: {}", e.getMessage()); // log at WARN, no stacktrace needed
+        log.warn("User not found: {}", e.getMessage());
 
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         problemDetail.setTitle("User Not Found");
         problemDetail.setDetail(e.getMessage());
         problemDetail.setProperty("errorCode", "USER_NOT_FOUND");
+        return problemDetail;
+    }
+
+    @ExceptionHandler(WrongPasswordException.class)
+    public ProblemDetail exception(WrongPasswordException e){
+        log.warn("Wrong password received for: {}", e.getMessage()); 
+
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        problemDetail.setTitle("Wrong password");
+        problemDetail.setDetail(e.getMessage());
+        problemDetail.setProperty("errorCode", "WRONG_PASSWORD");
+        return problemDetail;
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ProblemDetail exception(UserAlreadyExistsException e){
+        log.warn("User already exists: {}", e.getMessage()); 
+
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        problemDetail.setTitle("User Already Exists");
+        problemDetail.setDetail(e.getMessage());
+        problemDetail.setProperty("errorCode", "USER_ALREADY_EXISTS");
         return problemDetail;
     }
 }
