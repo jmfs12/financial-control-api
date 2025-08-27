@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ProblemDetail exception(UserNotFoundException e){
+    public ProblemDetail userNotFoundException(UserNotFoundException e){
         log.warn("User not found: {}", e.getMessage());
 
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
@@ -23,18 +23,18 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(WrongPasswordException.class)
-    public ProblemDetail exception(WrongPasswordException e){
+    public ProblemDetail wrongPasswordException(WrongPasswordException e){
         log.warn("Wrong password received for: {}", e.getMessage()); 
 
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-        problemDetail.setTitle("Wrong password");
+        problemDetail.setTitle("Wrong Password");
         problemDetail.setDetail(e.getMessage());
         problemDetail.setProperty("errorCode", "WRONG_PASSWORD");
         return problemDetail;
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ProblemDetail exception(UserAlreadyExistsException e){
+    public ProblemDetail userAlreadyExistsException(UserAlreadyExistsException e){
         log.warn("User already exists: {}", e.getMessage()); 
 
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
