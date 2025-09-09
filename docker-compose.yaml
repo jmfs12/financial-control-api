@@ -9,18 +9,21 @@ services:
       - private_network
     ports:
       - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   api:
     build:
-      context: ./api
+      context: .
     container_name: financial-api
     env_file:
       - api.env
     ports:
       - "8080:8080"
     volumes:
-      - /api/src:/app/src
-      - /api/pom.xml:/app/pom.xml
+      - ./src:/app/src
+      - ./pom.xml:/app/pom.xml
+      - maven_cache:/root/.m2 
     depends_on:
       - db
     networks:
@@ -33,4 +36,6 @@ networks:
   public_network:
     driver: bridge
 
-
+volumes:
+  postgres_data:
+  maven_cache:
