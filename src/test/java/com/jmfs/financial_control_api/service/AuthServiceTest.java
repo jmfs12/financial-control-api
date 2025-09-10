@@ -43,6 +43,7 @@ public class AuthServiceTest {
 
     @Test
     void testLoginSuccess() {
+        String name = "teste";
         String email = "test@example.com";
         String password = "123456";
         String encodedPassword = "encoded123456";
@@ -55,7 +56,7 @@ public class AuthServiceTest {
         when(passwordEncoder.matches(password, encodedPassword)).thenReturn(true);
         when(tokenService.generateToken(user)).thenReturn(token);
 
-        AuthRequest request = new AuthRequest(email, password);
+        AuthRequest request = new AuthRequest(name, email,  password);
         AuthResponse response = authService.login(request);
 
         assertEquals(email, response.email());
@@ -65,7 +66,7 @@ public class AuthServiceTest {
     @Test
     void testLoginUserNotFound() {
         String email = "notfound@example.com";
-        AuthRequest request = new AuthRequest(email, "pass");
+        AuthRequest request = new AuthRequest("pass", email,  "pass");
         when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
         assertThrows(
             UserNotFoundException.class,
@@ -83,7 +84,7 @@ public class AuthServiceTest {
         user.setPassword(encodedPassword);
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(password, encodedPassword)).thenReturn(false);
-        AuthRequest request = new AuthRequest(email, password);
+        AuthRequest request = new AuthRequest("pass", email, password);
         assertThrows(
             WrongPasswordException.class,
             () -> authService.login(request)
@@ -92,12 +93,13 @@ public class AuthServiceTest {
 
     @Test
     void testRegisterSuccess() {
+        String name = "teste";
         String email = "newuser@example.com";
         String password = "123456";
         String encodedPassword = "encoded123456";
         String token = "token";
 
-        AuthRequest request = new AuthRequest(email, password);
+        AuthRequest request = new AuthRequest(name, email, password);
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
         when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
@@ -116,7 +118,7 @@ public class AuthServiceTest {
         User user = new User();
         user.setEmail(email);
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
-        AuthRequest request = new AuthRequest(email, "pass");
+        AuthRequest request = new AuthRequest("pass", email, "pass");
         assertThrows(
             UserAlreadyExistsException.class,
             () -> authService.register(request)

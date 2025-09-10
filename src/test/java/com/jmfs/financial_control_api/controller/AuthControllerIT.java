@@ -37,7 +37,7 @@ public class AuthControllerIT {
 
     @Test
     void shouldCreateAndLoginUser() throws Exception{
-        AuthRequest request = new AuthRequest("test@gmail.com", "test123");
+        AuthRequest request = new AuthRequest("testname","test@gmail.com", "test123");
 
         mockMvc.perform(post("/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)

@@ -44,6 +44,7 @@ public class AuthServiceImpl implements AuthService{
         
         // implementar o fluent interface
         User user = new User();
+        user.setName(authRequest.username());
         user.setEmail(authRequest.email());
         user.setPassword(passwordEncoder.encode(authRequest.password()));
         user.setStatus(StatusEnum.ACTIVE);

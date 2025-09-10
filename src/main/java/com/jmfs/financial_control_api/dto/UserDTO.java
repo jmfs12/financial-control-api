@@ -1,5 +1,9 @@
 package com.jmfs.financial_control_api.dto;
 
-public record UserDTO(Long id, String email) {
-    
+import com.jmfs.financial_control_api.entity.User;
+
+public record UserDTO(String email, String name, String role) {
+    public static UserDTO fromEntity(User user){
+        return new UserDTO(user.getEmail(), user.getName(), user.getRole().getValue());
+    }
 }

@@ -1,5 +1,7 @@
 package com.jmfs.financial_control_api.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.jmfs.financial_control_api.dto.UserDTO;
@@ -15,7 +17,16 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
 
     @Override
-    public UserDTO getUser(Long id){
-        return null;
+    public List<UserDTO> getUser(String name, String role){
+        if(name != null || role != null) {
+            return userRepository.findUserByCriteria(name, role)
+                                    .stream()
+                                    .map(UserDTO::fromEntity)
+                                    .toList();
+        }
+        return userRepository.findAll()
+                                .stream()
+                                .map(UserDTO::fromEntity)
+                                .toList();
     }
 }
