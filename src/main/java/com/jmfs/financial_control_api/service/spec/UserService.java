@@ -1,10 +1,11 @@
 package com.jmfs.financial_control_api.service.spec;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.jmfs.financial_control_api.dto.UserDTO;
 
 public interface UserService {
-    public List<UserDTO> getUser(String name, String role);
+    public Page<UserDTO> getUser(Pageable pageable);
     
 }

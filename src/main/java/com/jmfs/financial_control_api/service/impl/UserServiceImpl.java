@@ -1,7 +1,7 @@
 package com.jmfs.financial_control_api.service.impl;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.jmfs.financial_control_api.dto.UserDTO;
@@ -17,16 +17,8 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
 
     @Override
-    public List<UserDTO> getUser(String name, String role){
-        if(name != null || role != null) {
-            return userRepository.findUserByCriteria(name, role)
-                                    .stream()
-                                    .map(UserDTO::fromEntity)
-                                    .toList();
-        }
-        return userRepository.findAll()
-                                .stream()
-                                .map(UserDTO::fromEntity)
-                                .toList();
+    public Page<UserDTO> getUser(Pageable pageable){
+        return userRepository.findAll(pageable).map(UserDTO::fromEntity);
     }
+
 }
