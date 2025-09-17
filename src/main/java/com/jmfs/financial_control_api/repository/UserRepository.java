@@ -14,13 +14,10 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
-    Optional<User> findByName(String username);
 
     @Modifying(clearAutomatically = true)
     @Query("DELETE FROM User u WHERE u.id IN :ids")
     void deleteByIds(@Param("ids") List<Long> ids);
-
-    boolean existsByEmail(String email);
 
     @Query("SELECT COUNT(u) > 0  FROM User u JOIN u.role r WHERE u.id = :userId AND r = :userRole")
     Boolean isAdmin(@Param("userId") Long userId, @Param("userRole") RoleEnum userRole);

@@ -48,9 +48,11 @@ public class AuthServiceTest {
         String password = "123456";
         String encodedPassword = "encoded123456";
         String token = "token";
-        User user = new User();
-        user.setEmail(email);
-        user.setPassword(encodedPassword);
+        User user = User.builder()
+                .name(name)
+                .email(email)
+                .password(encodedPassword)
+                .build();
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(password, encodedPassword)).thenReturn(true);

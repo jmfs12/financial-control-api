@@ -3,17 +3,14 @@ package com.jmfs.financial_control_api.entity;
 import com.jmfs.financial_control_api.entity.enums.RoleEnum;
 import com.jmfs.financial_control_api.entity.enums.StatusEnum;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 
 @Entity
 @Table(name="users")
-@Setter
-@Getter
+@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
@@ -41,6 +38,4 @@ public class User {
 
     @Column(name="created_at")
     private final Instant createdAt = Instant.now();
-
-
 }

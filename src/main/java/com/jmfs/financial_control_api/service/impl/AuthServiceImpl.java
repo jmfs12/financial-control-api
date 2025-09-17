@@ -42,13 +42,14 @@ public class AuthServiceImpl implements AuthService{
         if(userRepository.findByEmail(authRequest.email()).isPresent())
             throw new UserAlreadyExistsException("User already exists: " + authRequest.email());
         
-        // implementar o fluent interface
-        User user = new User();
-        user.setName(authRequest.username());
-        user.setEmail(authRequest.email());
-        user.setPassword(passwordEncoder.encode(authRequest.password()));
-        user.setStatus(StatusEnum.ACTIVE);
-        user.setRole(RoleEnum.USER);
+        User user = User.builder()
+                .name(authRequest.username())
+                .email(authRequest.email())
+                .password(passwordEncoder.encode(authRequest.password()))
+                .status(StatusEnum.ACTIVE)
+                .role(RoleEnum.USER)
+                .build();
+
         userRepository.save(user);
 
         String token = tokenService.generateToken(user);
