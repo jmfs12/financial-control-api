@@ -43,4 +43,15 @@ public class GlobalExceptionHandler {
         problemDetail.setProperty("errorCode", "USER_ALREADY_EXISTS");
         return problemDetail;
     }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ProblemDetail accessDeniedException(AccessDeniedException e){
+        log.warn("User don't have permission {}", e.getMessage());
+
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        problemDetail.setTitle("Access Denied");
+        problemDetail.setDetail(e.getMessage());
+        problemDetail.setProperty("errorCode", "ACCESS_DENIED");
+        return problemDetail;
+    }
 }

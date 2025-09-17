@@ -4,7 +4,7 @@ spring:
       on-profile: dev
 
   datasource:
-    url: jdbc:postgresql://db:5432/financial_db
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5433/financial_db}
     username: ${POSTGRES_USER:jmfs}
     password: ${POSTGRES_PASSWORD:jmfs}
     driver-class-name: org.postgresql.Driver
