@@ -31,8 +31,12 @@ import lombok.extern.slf4j.Slf4j;
 @EnableMethodSecurity(jsr250Enabled = true, securedEnabled = true)
 @Slf4j
 public class SecurityConfig {
+    private final SecurityFilter securityFilter;
+
     @Autowired
-    private SecurityFilter securityFilter;
+    public SecurityConfig(SecurityFilter securityFilter) {
+        this.securityFilter = securityFilter;
+    }
 
     @Value("${api.security.token.secret}")
     private String SECRET;

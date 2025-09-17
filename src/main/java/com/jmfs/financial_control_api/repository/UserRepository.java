@@ -19,6 +19,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("DELETE FROM User u WHERE u.id IN :ids")
     void deleteByIds(@Param("ids") List<Long> ids);
 
-    @Query("SELECT COUNT(u) > 0  FROM User u JOIN u.role r WHERE u.id = :userId AND r = :userRole")
+    @Query("SELECT COUNT(u) > 0 FROM User u WHERE u.id = :userId AND u.role = :userRole")
     Boolean isAdmin(@Param("userId") Long userId, @Param("userRole") RoleEnum userRole);
 }

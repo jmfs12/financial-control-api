@@ -2,7 +2,7 @@ package com.jmfs.financial_control_api.service;
 
 import java.lang.reflect.Field;
 
-import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ public class TokenServiceTest {
     @DisplayName("Should generate token succesfully")
 	void testGenerateToken() {
 		String token = tokenService.generateToken(user);
-		Assertions.assertNotNull(token);
+		assertNotNull(token);
 	}
 
 	@Test
@@ -44,7 +44,7 @@ public class TokenServiceTest {
 	void testValidateToken() {
 		String token = tokenService.generateToken(user);
 		String subject = tokenService.validateToken(token);
-		Assertions.assertEquals(user.getEmail(), subject);
+		assertEquals(user.getEmail(), subject);
 	}
 
 	@Test
@@ -52,7 +52,7 @@ public class TokenServiceTest {
 	void testValidateToken_invalid() {
 		String invalidToken = "invalid.token.value";
 		String subject = tokenService.validateToken(invalidToken);
-		Assertions.assertNull(subject);
+		assertNull(subject);
 	}
 
 	@Test
@@ -60,6 +60,6 @@ public class TokenServiceTest {
 	void testExtractUserId() {
 		String token = tokenService.generateToken(user);
 		Long id = tokenService.extractUserId(token);
-		Assertions.assertEquals(user.getId(), id);
+		assertEquals(user.getId(), id);
 	}
 }
