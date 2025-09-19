@@ -5,37 +5,10 @@ services:
     restart: always
     env_file:
       - db.env
-    networks:
-      - private_network
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  api:
-    build:
-      context: .
-    container_name: financial-api
-    env_file:
-      - api.env
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./src:/app/src
-      - ./pom.xml:/app/pom.xml
-      - maven_cache:/root/.m2 
-    depends_on:
-      - db
-    networks:
-      - private_network
-      - public_network
-
-networks:
-  private_network:
-    driver: bridge
-  public_network:
-    driver: bridge
-
 volumes:
   postgres_data:
-  maven_cache:

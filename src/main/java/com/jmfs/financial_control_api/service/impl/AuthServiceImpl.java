@@ -26,6 +26,7 @@ public class AuthServiceImpl implements AuthService{
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
 
+    @Override
     public AuthResponse login(AuthRequest authRequest){
         log.debug("[AUTH SERVICE] Attempting to log in user: {}", authRequest.email());
         User user = userRepository.findByEmail(authRequest.email())
@@ -37,6 +38,8 @@ public class AuthServiceImpl implements AuthService{
         }
         else throw new WrongPasswordException("Incorrect password for user: " + authRequest.email());
     }
+
+    @Override
     public AuthResponse register(AuthRequest authRequest){
         log.debug("[AUTH SERVICE] Attempting to register user: {}", authRequest.email());
         if(userRepository.findByEmail(authRequest.email()).isPresent())

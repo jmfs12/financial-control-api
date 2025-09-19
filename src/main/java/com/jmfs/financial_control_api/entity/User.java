@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="users")
@@ -38,4 +40,12 @@ public class User {
 
     @Column(name="created_at")
     private final Instant createdAt = Instant.now();
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    ) private List<Account> accounts = new ArrayList<>();
+
 }
