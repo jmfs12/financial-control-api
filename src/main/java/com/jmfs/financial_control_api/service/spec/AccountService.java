@@ -14,4 +14,8 @@ public interface AccountService {
     public Page<Account> getAllAccountsByUser(String token, Long userId, Pageable pageable) ;
 
     Account getAccount(String token, AccountDTO accountDTO);
+
+    void deleteAccount(String token, AccountDTO accountDTO);
+
+    void updateAccount(String token, AccountDTO accountDTO);
 }

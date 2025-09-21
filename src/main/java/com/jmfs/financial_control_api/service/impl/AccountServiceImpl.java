@@ -19,8 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -66,17 +64,44 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account getAccount(String token, AccountDTO accountDTO){
-        verifyRequester(token, accountDTO.userId());
+        return findAccount(token, accountDTO.userId(), accountDTO.name());
+    }
+
+    @Override
+    public void deleteAccount(String token, AccountDTO accountDTO) {
+        Account account = findAccount(token, accountDTO.userId(), accountDTO.name());
+
+        accountRepository.delete(account);
+    }
+
+    @Override
+    public void updateAccount(String token, AccountDTO accountDTO){
+        Account account = findAccount(token, accountDTO.userId(), accountDTO.name());
+
+        if (accountDTO.type() != null){
+            account.setType(TypeEnum.fromString(accountDTO.type()));
+        }
+        if (accountDTO.balance_snapshot() != null){
+            account.setBalance_snapshot(accountDTO.balance_snapshot());
+        }
+        if (accountDTO.institution() != null){
+            account.setInstitution(accountDTO.institution());
+        }
+        accountRepository.save(account);
+    }
+
+    private Account findAccount(String token, Long userId, String name){
+        verifyRequester(token, userId);
 
         Specification<Account> spec =
                 (root, query, cb) ->
                         cb.and(
-                                cb.equal(root.get("user").get("id"), accountDTO.userId()),
-                                cb.equal(root.get("name"), accountDTO.name())
+                                cb.equal(root.get("user").get("id"), userId),
+                                cb.equal(root.get("name"), name)
                         );
 
         return accountRepository.findOne(spec).
-                orElseThrow(() -> new AccountNotFoundException("Account not found with name: " + accountDTO.name()));
+                orElseThrow(() -> new AccountNotFoundException("Account not found with name: " + name));
     }
 
     private void verifyRequester(String token, Long userId){
@@ -84,4 +109,5 @@ public class AccountServiceImpl implements AccountService {
             throw new AccessDeniedException("Invalid request for getting account");
         }
     }
+
 }
