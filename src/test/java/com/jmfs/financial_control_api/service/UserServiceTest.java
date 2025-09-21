@@ -1,5 +1,6 @@
 package com.jmfs.financial_control_api.service;
 
+import com.jmfs.financial_control_api.dto.TokenClaimsDTO;
 import com.jmfs.financial_control_api.exceptions.AccessDeniedException;
 import com.jmfs.financial_control_api.service.spec.TokenService;
 import org.junit.jupiter.api.DisplayName;
@@ -82,10 +83,12 @@ public class UserServiceTest {
     void testPatchUser_case1(){
         String token = "token";
         UserDTO userDTO = new UserDTO(user1.getEmail(), "João Souza", RoleEnum.ADMIN.getValue(), StatusEnum.INACTIVE.getValue());
+        TokenClaimsDTO tokenClaimsDTO = new TokenClaimsDTO(user1.getId(), user1.getRole().getValue());
+
 
         when(userRepository.findByEmail(user1.getEmail())).thenReturn(Optional.of(user1));
-        when(tokenService.extractClaim(token).id()).thenReturn(user2.getId());
-        when(userRepository.isAdmin(user2.getId(), RoleEnum.ADMIN)).thenReturn(true);
+        when(tokenService.extractClaim(token)).thenReturn(tokenClaimsDTO);
+        when(userRepository.isAdmin(user1.getId(), RoleEnum.ADMIN)).thenReturn(true);
 
         userService.patchUser("token", userDTO);
 
@@ -106,9 +109,10 @@ public class UserServiceTest {
     void testPatchUser_case2(){
         String token = "token";
         UserDTO userDTO = new UserDTO(user1.getEmail(), "João Souza", null, null);
+        TokenClaimsDTO tokenClaimsDTO = new TokenClaimsDTO(user1.getId(), user1.getRole().getValue());
 
         when(userRepository.findByEmail(user1.getEmail())).thenReturn(Optional.of(user1));
-        when(tokenService.extractClaim(token).id()).thenReturn(user1.getId());
+        when(tokenService.extractClaim(token)).thenReturn(tokenClaimsDTO);
         when(userRepository.isAdmin(user1.getId(), RoleEnum.ADMIN)).thenReturn(false);
 
         userService.patchUser("token", userDTO);
@@ -130,9 +134,10 @@ public class UserServiceTest {
     void testPatchUser_case3(){
         String token = "token";
         UserDTO userDTO = new UserDTO(user1.getEmail(), "João Souza", null, null);
+        TokenClaimsDTO tokenClaimsDTO = new TokenClaimsDTO(user3.getId(), user3.getRole().getValue());
 
         when(userRepository.findByEmail(user1.getEmail())).thenReturn(Optional.of(user1));
-        when(tokenService.extractClaim(token).id()).thenReturn(user3.getId());
+        when(tokenService.extractClaim(token)).thenReturn(tokenClaimsDTO);
         when(userRepository.isAdmin(user3.getId(), RoleEnum.ADMIN)).thenReturn(false);
 
 
@@ -147,10 +152,11 @@ public class UserServiceTest {
     void testPatchUser_case4(){
         String token = "token";
         UserDTO userDTO = new UserDTO(user1.getEmail(), "João Souza", RoleEnum.ADMIN.getValue(), null);
+        TokenClaimsDTO tokenClaimsDTO = new TokenClaimsDTO(user3.getId(), user3.getRole().getValue());
 
         when(userRepository.findByEmail(user1.getEmail())).thenReturn(Optional.of(user1));
-        when(tokenService.extractClaim(token).id()).thenReturn(user1.getId());
-        when(userRepository.isAdmin(user1.getId(), RoleEnum.ADMIN)).thenReturn(false);
+        when(tokenService.extractClaim(token)).thenReturn(tokenClaimsDTO);
+        when(userRepository.isAdmin(user3.getId(), RoleEnum.ADMIN)).thenReturn(false);
 
 
         assertThrows(

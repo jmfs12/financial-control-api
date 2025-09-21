@@ -3,6 +3,8 @@ package com.jmfs.financial_control_api.service;
 import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import com.jmfs.financial_control_api.entity.enums.RoleEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +32,7 @@ public class TokenServiceTest {
 		user = new User();
 		user.setId(1L);
 		user.setEmail("test@example.com");
+        user.setRole(RoleEnum.ADMIN);
 	}
 
 	@Test
