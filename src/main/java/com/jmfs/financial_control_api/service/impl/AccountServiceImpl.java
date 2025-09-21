@@ -30,9 +30,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account createAccount(String token, AccountDTO accountDTO) {
+        log.debug("[ACCOUNT SERVICE] Creating account for {}", accountDTO);
         verifyRequester(token, accountDTO.userId());
 
-        log.debug("[ACCOUNT SERVICE] Creating account for {}", accountDTO);
         User user = userRepository.findById(accountDTO.userId())
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + accountDTO.userId()));
 
@@ -54,6 +54,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Page<Account> getAllAccountsByUser(String token, Long userId, Pageable pageable) {
+        log.debug("[ACCOUNT SERVICE] Getting all accounts in page {}", pageable);
         verifyRequester(token, userId);
 
         Specification<Account> spec =
@@ -64,11 +65,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account getAccount(String token, AccountDTO accountDTO){
+        log.debug("[ACCOUNT SERVICE] Getting {} account", accountDTO.name());
         return findAccount(token, accountDTO.userId(), accountDTO.name());
     }
 
     @Override
     public void deleteAccount(String token, AccountDTO accountDTO) {
+        log.debug("[ACCOUNT SERVICE] Deleting {} account", accountDTO.name());
         Account account = findAccount(token, accountDTO.userId(), accountDTO.name());
 
         accountRepository.delete(account);
@@ -76,6 +79,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void updateAccount(String token, AccountDTO accountDTO){
+        log.debug("[ACCOUNT SERVICE] Updating {} account", accountDTO.name());
         Account account = findAccount(token, accountDTO.userId(), accountDTO.name());
 
         if (accountDTO.type() != null){
@@ -105,8 +109,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private void verifyRequester(String token, Long userId){
+        log.debug("[ACCOUNT SERVICE] verifying request");
         if (!tokenService.extractClaim(token).id().equals(userId)) {
-            throw new AccessDeniedException("Invalid request for getting account");
+            throw new AccessDeniedException("Invalid request: requester is trying to access other user info ");
         }
     }
 
