@@ -84,7 +84,7 @@ public class UserServiceTest {
         UserDTO userDTO = new UserDTO(user1.getEmail(), "João Souza", RoleEnum.ADMIN.getValue(), StatusEnum.INACTIVE.getValue());
 
         when(userRepository.findByEmail(user1.getEmail())).thenReturn(Optional.of(user1));
-        when(tokenService.extractUserId(token)).thenReturn(user2.getId());
+        when(tokenService.extractClaim(token).id()).thenReturn(user2.getId());
         when(userRepository.isAdmin(user2.getId(), RoleEnum.ADMIN)).thenReturn(true);
 
         userService.patchUser("token", userDTO);
@@ -108,7 +108,7 @@ public class UserServiceTest {
         UserDTO userDTO = new UserDTO(user1.getEmail(), "João Souza", null, null);
 
         when(userRepository.findByEmail(user1.getEmail())).thenReturn(Optional.of(user1));
-        when(tokenService.extractUserId(token)).thenReturn(user1.getId());
+        when(tokenService.extractClaim(token).id()).thenReturn(user1.getId());
         when(userRepository.isAdmin(user1.getId(), RoleEnum.ADMIN)).thenReturn(false);
 
         userService.patchUser("token", userDTO);
@@ -132,7 +132,7 @@ public class UserServiceTest {
         UserDTO userDTO = new UserDTO(user1.getEmail(), "João Souza", null, null);
 
         when(userRepository.findByEmail(user1.getEmail())).thenReturn(Optional.of(user1));
-        when(tokenService.extractUserId(token)).thenReturn(user3.getId());
+        when(tokenService.extractClaim(token).id()).thenReturn(user3.getId());
         when(userRepository.isAdmin(user3.getId(), RoleEnum.ADMIN)).thenReturn(false);
 
 
@@ -149,7 +149,7 @@ public class UserServiceTest {
         UserDTO userDTO = new UserDTO(user1.getEmail(), "João Souza", RoleEnum.ADMIN.getValue(), null);
 
         when(userRepository.findByEmail(user1.getEmail())).thenReturn(Optional.of(user1));
-        when(tokenService.extractUserId(token)).thenReturn(user1.getId());
+        when(tokenService.extractClaim(token).id()).thenReturn(user1.getId());
         when(userRepository.isAdmin(user1.getId(), RoleEnum.ADMIN)).thenReturn(false);
 
 

@@ -59,7 +59,7 @@ public class TokenServiceTest {
     @DisplayName("Should extract user id succesfully")
 	void testExtractUserId() {
 		String token = tokenService.generateToken(user);
-		Long id = tokenService.extractUserId(token);
+		Long id = tokenService.extractClaim(token).id();
 		assertEquals(user.getId(), id);
 	}
 }

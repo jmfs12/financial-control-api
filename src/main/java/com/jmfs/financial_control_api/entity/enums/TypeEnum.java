@@ -10,6 +10,15 @@ public enum TypeEnum {
 
     private final String value;
 
+    public static TypeEnum fromString(String value) {
+        for (TypeEnum type : values()) {
+            if (type.value.equals(value)) {
+                return type;
+            }
+        }
+        throw new  IllegalArgumentException("Invalid type " + value);
+    }
+
     TypeEnum(String value) {
         this.value = value;
     }

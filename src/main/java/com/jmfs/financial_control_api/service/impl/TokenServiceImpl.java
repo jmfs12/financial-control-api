@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.jmfs.financial_control_api.dto.TokenClaimsDTO;
 import com.jmfs.financial_control_api.entity.User;
 import com.jmfs.financial_control_api.service.spec.TokenService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ public class TokenServiceImpl implements TokenService {
         String token = JWT.create()
                 .withIssuer("financial-control")
                 .withClaim("id", user.getId())
+                .withClaim("role", user.getRole().getValue())
                 .withSubject(user.getEmail())
                 .withExpiresAt(getExpirationTime())
                 .sign(algorithm);
@@ -56,17 +58,23 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Long extractUserId(String token){
-        log.debug("[TOKEN SERVICE] Extracting id from token");
-        Algorithm algorithm = Algorithm.HMAC256(SECRET);
+    public TokenClaimsDTO extractClaim(String token){
+        log.debug("[TOKEN SERVICE] Extracting role and id from token");
+        DecodedJWT jwt = this.verifyToken(token);
 
-        JWTVerifier verifier = JWT.require(algorithm).build();
-        DecodedJWT jwt = verifier.verify(token);
+        String role = jwt.getClaim("role").asString();
+        log.debug("[TOKEN SERVICE] Role extracted: {}", role);
 
         Long id = jwt.getClaim("id").asLong();
         log.debug("[TOKEN SERVICE] Id extracted: {}", id);
+        return new TokenClaimsDTO(id, role);
+    }
 
-        return id;
+    private DecodedJWT verifyToken(String token){
+        Algorithm algorithm = Algorithm.HMAC256(SECRET);
+
+        JWTVerifier verifier = JWT.require(algorithm).build();
+        return verifier.verify(token);
     }
 
     private Instant getExpirationTime() {

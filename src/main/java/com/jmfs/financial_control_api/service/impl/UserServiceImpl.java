@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService{
         User userToUpdate = userRepository.findByEmail(userDTO.email())
                 .orElseThrow(() -> new UserNotFoundException(userDTO.email()));
 
-        Long requesterId = tokenService.extractUserId(token);
+        Long requesterId = tokenService.extractClaim(token).id();
         boolean isRequesterAdmin = userRepository.isAdmin(requesterId, RoleEnum.ADMIN);
 
         if (isRequesterAdmin) {

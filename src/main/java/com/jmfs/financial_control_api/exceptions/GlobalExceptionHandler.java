@@ -54,4 +54,15 @@ public class GlobalExceptionHandler {
         problemDetail.setProperty("errorCode", "ACCESS_DENIED");
         return problemDetail;
     }
+
+    @ExceptionHandler(AccountAlreadyExists.class)
+    public ProblemDetail accountAlreadyExists(AccountAlreadyExists e){
+        log.warn("Account already exists {}", e.getMessage());
+
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        problemDetail.setTitle("Account Already Exists");
+        problemDetail.setDetail(e.getMessage());
+        problemDetail.setProperty("errorCode", "ACCOUNT_ALREADY_EXISTS");
+        return problemDetail;
+    }
 }
