@@ -65,4 +65,15 @@ public class GlobalExceptionHandler {
         problemDetail.setProperty("errorCode", "ACCOUNT_ALREADY_EXISTS");
         return problemDetail;
     }
+
+    @ExceptionHandler(AccountNotFoundException.class)
+    public ProblemDetail accountNotFound(AccountNotFoundException e){
+        log.warn("Account not found: {}", e.getMessage());
+
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        problemDetail.setTitle("Account Not Found");
+        problemDetail.setDetail(e.getMessage());
+        problemDetail.setProperty("errorCode", "ACCOUNT_NOT_FOUND");
+        return problemDetail;
+    }
 }
