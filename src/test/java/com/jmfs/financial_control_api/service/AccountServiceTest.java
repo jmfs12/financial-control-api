@@ -11,18 +11,29 @@ import com.jmfs.financial_control_api.entity.User;
 import com.jmfs.financial_control_api.entity.enums.RoleEnum;
 import com.jmfs.financial_control_api.entity.enums.StatusEnum;
 import com.jmfs.financial_control_api.entity.enums.TypeEnum;
+import com.jmfs.financial_control_api.exceptions.AccessDeniedException;
+import com.jmfs.financial_control_api.exceptions.AccountNotFoundException;
 import com.jmfs.financial_control_api.repository.AccountRepository;
 import com.jmfs.financial_control_api.repository.UserRepository;
 import com.jmfs.financial_control_api.service.impl.AccountServiceImpl;
 import com.jmfs.financial_control_api.service.spec.TokenService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,6 +59,9 @@ class AccountServiceTest {
 
     TokenClaimsDTO testClaims;
     AccountDTO testAccountDTO;
+    String token = "any-token";
+
+    Pageable pageable;
 
     @BeforeEach
     void setUp() {
@@ -100,12 +114,15 @@ class AccountServiceTest {
                 .user(testUser2)
                 .build();
 
-        testClaims = new TokenClaimsDTO(1L, "USER");
+        testClaims = TokenClaimsDTO.fromEntity(testUser1);
         testAccountDTO = AccountDTO.fromEntity(testAccount1);
+
+        pageable = PageRequest.of(0, 10);
     }
 
     @Test
-    void createAccount() {
+    @DisplayName("Create account successfully when all is ok")
+    void createAccountCase1() {
 
         when(tokenService.extractClaim(anyString())).thenReturn(testClaims);
         when(userRepository.findById(testUser1.getId())).thenReturn(Optional.of(testUser1));
@@ -116,7 +133,7 @@ class AccountServiceTest {
             return account;
         });
 
-        Account newAccount = accountService.createAccount("token", testAccountDTO);
+        Account newAccount = accountService.createAccount(token, testAccountDTO);
 
         assertNotNull(newAccount);
         assertEquals(testAccount1.getId(), newAccount.getId());
@@ -127,18 +144,89 @@ class AccountServiceTest {
     }
 
     @Test
-    void getAllAccountsByUser() {
+    @DisplayName("Throw exception when requester try to create account for other user")
+    void createAccountCase2(){
+        testClaims = TokenClaimsDTO.fromEntity(testUser2);
+        when(tokenService.extractClaim(anyString())).thenReturn(testClaims);
+        assertThrows(
+                AccessDeniedException.class,
+                () -> accountService.createAccount(token, testAccountDTO)
+        );
     }
 
     @Test
-    void getAccount() {
+    @DisplayName("Should return accounts by page for user")
+    void getAllAccountsByUserCase1() {
+        List<Account> accounts = Arrays.asList(testAccount1, testAccount2);
+        Page<Account> expectedPage = new PageImpl<>(accounts, pageable, accounts.size());
+
+        when(tokenService.extractClaim(anyString())).thenReturn(testClaims);
+        when(accountRepository.findAll(any(Specification.class), eq(pageable)))
+                .thenReturn(expectedPage);
+
+        Page<Account> resultPage = accountService.getAllAccountsByUser(token, testAccount1.getUser().getId(), pageable);
+
+        assertEquals(expectedPage.getTotalElements(), resultPage.getTotalElements(), "Numbers of result should be equal");
+        assertEquals(expectedPage
+                .getContent().getFirst().getUser().getId(),
+                resultPage.getContent().getFirst().getUser().getId(),
+                "User id should be equal for first account");
+        assertEquals(expectedPage
+                .getContent().get(1).getUser().getId(),
+                resultPage.getContent().getFirst().getUser().getId(),
+                "User id should be equal for second account");
+
+        verify(accountRepository).findAll(any(Specification.class), eq(pageable));
     }
 
     @Test
+    @DisplayName("Should return account successfully")
+    void getAccountCase1() {
+        when(tokenService.extractClaim(anyString())).thenReturn(testClaims);
+        when(accountRepository.findOne(any(Specification.class)))
+                .thenReturn(Optional.of(testAccount1));
+
+        Account acc = accountService.getAccount(token, testAccountDTO);
+        assertNotNull(acc);
+        assertEquals(testAccount1.getId(), acc.getId(), "Account id should be equal");
+
+        verify(accountRepository).findOne(any(Specification.class));
+    }
+
+    @Test
+    @DisplayName("Should throw exception when not find account")
+    void getAccountCase2() {
+        when(tokenService.extractClaim(anyString())).thenReturn(testClaims);
+        when(accountRepository.findOne(any(Specification.class)))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                AccountNotFoundException.class,
+                () -> accountService.getAccount(token, testAccountDTO)
+        );
+    }
+
+    @Test
+    @DisplayName("Should delete account successfully")
     void deleteAccount() {
+        when(tokenService.extractClaim(anyString())).thenReturn(testClaims);
+        when(accountRepository.findOne(any(Specification.class)))
+                .thenReturn(Optional.of(testAccount1));
+        accountService.deleteAccount(token, testAccountDTO);
+        verify(accountRepository, times(1)).delete(any(Account.class));
     }
 
     @Test
+    @DisplayName("Should update account successfully")
     void updateAccount() {
+        when(tokenService.extractClaim(anyString())).thenReturn(testClaims);
+        when(accountRepository.findOne(any(Specification.class)))
+                .thenReturn(Optional.of(testAccount2));
+        accountService.updateAccount(token, testAccountDTO);
+        assertEquals(testAccount2.getType().getValue(), testAccountDTO.type());
+        assertEquals(testAccount2.getBalance_snapshot(), testAccountDTO.balance_snapshot());
+        assertEquals(testAccount2.getInstitution(), testAccountDTO.institution());
+        verify(accountRepository, times(1)).save(any(Account.class));
+
     }
 }

@@ -65,7 +65,13 @@ class AccountRepositoryTest {
 
     @Test
     @DisplayName("Should return true when an account exists with name and userId")
-    void existsByNameAndUserId() {
+    void existsByNameAndUserIdCase1() {
         assertTrue(accountRepository.existsByNameAndUserId(testAccount.getName(), testAccount.getId()));
+    }
+
+    @Test
+    @DisplayName("Should return false when id is wrong")
+    void existsByNameAndUserIdCase2(){
+        assertFalse(accountRepository.existsByNameAndUserId(testAccount.getName(), 8L));
     }
 }
