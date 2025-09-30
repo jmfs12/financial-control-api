@@ -29,7 +29,7 @@ public class AccountServiceImpl implements AccountService {
     private final TokenService tokenService;
 
     @Override
-    public Account createAccount(String token, AccountDTO accountDTO) {
+    public void createAccount(String token, AccountDTO accountDTO) {
         log.debug("[ACCOUNT SERVICE] Creating account for {}", accountDTO);
         verifyRequester(token, accountDTO.userId());
 
@@ -49,24 +49,27 @@ public class AccountServiceImpl implements AccountService {
                 .institution(accountDTO.institution())
                 .build();
 
-        return accountRepository.save(account);
+        accountRepository.save(account);
     }
 
     @Override
-    public Page<Account> getAllAccountsByUser(String token, Long userId, Pageable pageable) {
+    public Page<AccountDTO> getAllAccountsByUser(String token, Pageable pageable) {
         log.debug("[ACCOUNT SERVICE] Getting all accounts in page {}", pageable);
-        verifyRequester(token, userId);
+        Long userId = tokenService.extractClaim(token).id();
 
         Specification<Account> spec =
                 (root, query, cb) ->
                         cb.equal(root.get("user").get("id"), userId);
-        return accountRepository.findAll(spec, pageable);
+        return accountRepository.findAll(spec, pageable)
+                .map(AccountDTO::fromEntity);
+
     }
 
     @Override
-    public Account getAccount(String token, AccountDTO accountDTO){
+    public AccountDTO getAccount(String token, AccountDTO accountDTO){
         log.debug("[ACCOUNT SERVICE] Getting {} account", accountDTO.name());
-        return findAccount(token, accountDTO.userId(), accountDTO.name());
+        Account account = findAccount(token, accountDTO.userId(), accountDTO.name());
+        return AccountDTO.fromEntity(account);
     }
 
     @Override

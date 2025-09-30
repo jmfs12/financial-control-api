@@ -133,11 +133,7 @@ class AccountServiceTest {
             return account;
         });
 
-        Account newAccount = accountService.createAccount(token, testAccountDTO);
-
-        assertNotNull(newAccount);
-        assertEquals(testAccount1.getId(), newAccount.getId());
-        assertEquals(testAccount1.getName(), newAccount.getName());
+        accountService.createAccount(token, testAccountDTO);
 
         verify(accountRepository, times(1)).save(any(Account.class));
 
@@ -164,16 +160,16 @@ class AccountServiceTest {
         when(accountRepository.findAll(any(Specification.class), eq(pageable)))
                 .thenReturn(expectedPage);
 
-        Page<Account> resultPage = accountService.getAllAccountsByUser(token, testAccount1.getUser().getId(), pageable);
+        Page<AccountDTO> resultPage = accountService.getAllAccountsByUser(token, pageable);
 
         assertEquals(expectedPage.getTotalElements(), resultPage.getTotalElements(), "Numbers of result should be equal");
         assertEquals(expectedPage
                 .getContent().getFirst().getUser().getId(),
-                resultPage.getContent().getFirst().getUser().getId(),
+                resultPage.getContent().getFirst().userId(),
                 "User id should be equal for first account");
         assertEquals(expectedPage
                 .getContent().get(1).getUser().getId(),
-                resultPage.getContent().getFirst().getUser().getId(),
+                resultPage.getContent().getFirst().userId(),
                 "User id should be equal for second account");
 
         verify(accountRepository).findAll(any(Specification.class), eq(pageable));
@@ -186,9 +182,9 @@ class AccountServiceTest {
         when(accountRepository.findOne(any(Specification.class)))
                 .thenReturn(Optional.of(testAccount1));
 
-        Account acc = accountService.getAccount(token, testAccountDTO);
+        AccountDTO acc = accountService.getAccount(token, testAccountDTO);
         assertNotNull(acc);
-        assertEquals(testAccount1.getId(), acc.getId(), "Account id should be equal");
+        assertEquals(testAccount1.getName(), acc.name(), "Account name should be equal");
 
         verify(accountRepository).findOne(any(Specification.class));
     }
