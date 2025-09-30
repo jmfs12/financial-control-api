@@ -182,7 +182,7 @@ class AccountServiceTest {
         when(accountRepository.findOne(any(Specification.class)))
                 .thenReturn(Optional.of(testAccount1));
 
-        AccountDTO acc = accountService.getAccount(token, testAccountDTO);
+        AccountDTO acc = accountService.getAccount(token, testAccountDTO.name());
         assertNotNull(acc);
         assertEquals(testAccount1.getName(), acc.name(), "Account name should be equal");
 
@@ -198,7 +198,7 @@ class AccountServiceTest {
 
         assertThrows(
                 AccountNotFoundException.class,
-                () -> accountService.getAccount(token, testAccountDTO)
+                () -> accountService.getAccount(token, testAccountDTO.name())
         );
     }
 
@@ -208,7 +208,7 @@ class AccountServiceTest {
         when(tokenService.extractClaim(anyString())).thenReturn(testClaims);
         when(accountRepository.findOne(any(Specification.class)))
                 .thenReturn(Optional.of(testAccount1));
-        accountService.deleteAccount(token, testAccountDTO);
+        accountService.deleteAccount(token, testAccountDTO.name());
         verify(accountRepository, times(1)).delete(any(Account.class));
     }
 

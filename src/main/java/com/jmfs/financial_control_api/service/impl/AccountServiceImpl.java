@@ -66,16 +66,16 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDTO getAccount(String token, AccountDTO accountDTO){
-        log.debug("[ACCOUNT SERVICE] Getting {} account", accountDTO.name());
-        Account account = findAccount(token, accountDTO.userId(), accountDTO.name());
+    public AccountDTO getAccount(String token, String name){
+        log.debug("[ACCOUNT SERVICE] Getting {} account", name);
+        Account account = findAccount(token, name);
         return AccountDTO.fromEntity(account);
     }
 
     @Override
-    public void deleteAccount(String token, AccountDTO accountDTO) {
-        log.debug("[ACCOUNT SERVICE] Deleting {} account", accountDTO.name());
-        Account account = findAccount(token, accountDTO.userId(), accountDTO.name());
+    public void deleteAccount(String token, String name) {
+        log.debug("[ACCOUNT SERVICE] Deleting {} account", name);
+        Account account = findAccount(token, name);
 
         accountRepository.delete(account);
     }
@@ -83,7 +83,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void updateAccount(String token, AccountDTO accountDTO){
         log.debug("[ACCOUNT SERVICE] Updating {} account", accountDTO.name());
-        Account account = findAccount(token, accountDTO.userId(), accountDTO.name());
+        Account account = findAccount(token, accountDTO.name());
 
         if (accountDTO.type() != null){
             account.setType(TypeEnum.fromString(accountDTO.type()));
@@ -97,9 +97,8 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.save(account);
     }
 
-    private Account findAccount(String token, Long userId, String name){
-        verifyRequester(token, userId);
-
+    private Account findAccount(String token, String name){
+        Long userId = tokenService.extractClaim(token).id();
         Specification<Account> spec =
                 (root, query, cb) ->
                         cb.and(

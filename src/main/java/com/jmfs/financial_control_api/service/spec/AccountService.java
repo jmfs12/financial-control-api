@@ -10,9 +10,9 @@ public interface AccountService {
 
     Page<AccountDTO> getAllAccountsByUser(String token, Pageable pageable) ;
 
-    AccountDTO getAccount(String token, AccountDTO accountDTO);
+    AccountDTO getAccount(String token, String name);
 
-    void deleteAccount(String token, AccountDTO accountDTO);
+    void deleteAccount(String token, String name);
 
     void updateAccount(String token, AccountDTO accountDTO);
 }
