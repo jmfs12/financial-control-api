@@ -31,9 +31,21 @@ public class AccountController {
 
     @GetMapping("/all")
     public ResponseEntity<Page<AccountDTO>> getAllAccounts(@RequestHeader String token, Pageable pageable) {
-        return  ResponseEntity.status(HttpStatus.OK).body(
+        return ResponseEntity.status(HttpStatus.OK).body(
                 accountService.getAllAccountsByUser(token, pageable)
         );
+    }
+
+    @DeleteMapping("/{name}")
+    public ResponseEntity<AccountDTO> deleteAccount(@RequestHeader String token, @PathVariable String name) {
+        accountService.deleteAccount(token.substring(7), name);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping
+    public ResponseEntity<AccountDTO> updateAccount(@RequestHeader String token, @RequestBody AccountDTO accountDTO) {
+        accountService.updateAccount(token.substring(7), accountDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(accountDTO);
     }
 
 }
